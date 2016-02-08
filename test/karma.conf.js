@@ -46,7 +46,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['spec', 'clear-screen'],
 
 
     // web server port
@@ -62,7 +62,7 @@ module.exports = function(config) {
 
 
     // enable / disable watching file and executing tests whenever any file changes
-    autoWatch: false,
+    autoWatch: true,
 
 
     // start these browsers
@@ -72,7 +72,7 @@ module.exports = function(config) {
 
     // Continuous Integration mode
     // if true, Karma captures browsers, runs the tests and exits
-    singleRun: true,
+    singleRun: false,
 
     // Concurrency level
     // how many browser should be started simultanous
@@ -82,6 +82,13 @@ module.exports = function(config) {
       // strip this from the file path
       stripPrefix: 'example/',
       moduleName: 'my.templates'
-    }
+    },
+
+    plugins: ['karma-spec-reporter',
+              'karma-clear-screen-reporter',
+              'karma-chrome-launcher',
+              'karma-phantomjs-launcher',
+              'karma-jasmine',
+              'karma-ng-html2js-preprocessor']
   })
 }
