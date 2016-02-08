@@ -3,7 +3,7 @@
 
   'use strict';
 
-  angular.module('pdf', []).directive('ngPdf', [ '$window', function($window) {
+  angular.module('pdf', []).directive('ngPdf', [ '$window', '$compile', function($window, $compile) {
     var renderTask = null;
     var pdfLoaderTask = null;
     var debug = false;
@@ -42,12 +42,21 @@
         var pageToDisplay = isFinite(attrs.page) ? parseInt(attrs.page) : 1;
         var pageFit = attrs.scale === 'page-fit';
         var scale = attrs.scale > 0 ? attrs.scale : 1;
+
+        //Set the canvas height and width to the height and width of the viewport
         var canvasid = attrs.canvasid || 'pdf-canvas';
+        var $canvas = angular.element(document).find('#' + canvasid);
         var canvas = document.getElementById(canvasid);
+        var ctx = canvas.getContext('2d');
+
+        //Append the canvas to the pdf container div
+        var $pdfContainer = angular.element(document).find('#pdfContainer');
+        $pdfContainer.css('height', canvas.height + 'px').css('width', canvas.width + 'px');
+        $pdfContainer.append($canvas);
+
 
         debug = attrs.hasOwnProperty('debug') ? attrs.debug : false;
         var creds = attrs.usecredentials;
-        var ctx = canvas.getContext('2d');
         var windowEl = angular.element($window);
 
         windowEl.on('scroll', function() {
@@ -75,22 +84,67 @@
               pageWidthScale = clientRect.width / viewport.width;
               scale = pageWidthScale;
             }
-            viewport = page.getViewport(scale);
+
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+
+            // Arrange text layer
+            //var canvasOffset = $canvas.offset();
+            var $textLayerDiv = angular.element('<div />')
+                .addClass('textLayer')
+                .css('height', viewport.height + 'px')
+                .css('width', viewport.width + 'px')
+                /*.offset({
+                  top: canvasOffset.top,
+                  left: canvasOffset.left
+                })*/
+                ;
+
+            element.append($textLayerDiv);
+            $compile($textLayerDiv)(scope);
+
+            //The following few lines of code set up scaling on the context if we are on a HiDPI display
+            if (scale.scaled) {
+              var cssScale = 'scale(' + (1 / scale.sx) + ', ' +
+                  (1 / scale.sy) + ')';
+              CustomStyle.setProp('transform', canvas, cssScale);
+              CustomStyle.setProp('transformOrigin', canvas, '0% 0%');
+
+              if ($textLayerDiv.get(0)) {
+                CustomStyle.setProp('transform', $textLayerDiv.get(0), cssScale);
+                CustomStyle.setProp('transformOrigin', $textLayerDiv.get(0), '0% 0%');
+              }
+            }
+
+            ctx._scaleX = scale.sx;
+            ctx._scaleY = scale.sy;
+            if (scale.scaled) {
+              ctx.scale(scale.sx, scale.sy);
+            }
+
+            $pdfContainer.append($textLayerDiv);
 
             setCanvasDimensions(canvas, viewport.width, viewport.height);
 
-            renderContext = {
-              canvasContext: ctx,
-              viewport: viewport
-            };
+            page.getTextContent().then(function (textContent) {
+              var textLayer = new TextLayerBuilder($textLayerDiv.get(0), 0);
 
-            renderTask = page.render(renderContext);
-            renderTask.promise.then(function() {
+              textLayer.setTextContent(textContent);
+
+              renderContext = {
+                canvasContext: ctx,
+                viewport: viewport,
+                textLayer: textLayer
+              };
+
+              renderTask = page.render(renderContext);
+              renderTask.promise.then(function() {
                 if (typeof scope.onPageRender === 'function') {
-                    scope.onPageRender();
+                  scope.onPageRender();
                 }
-            }).catch(function (reason) {
+              }).catch(function (reason) {
                 console.log(reason);
+              });
             });
           });
         };
