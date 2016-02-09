@@ -3,7 +3,7 @@
 
   'use strict';
 
-  angular.module('pdf', []).directive('ngPdf', [ '$window', '$compile', function($window, $compile) {
+  angular.module('pdf', []).directive('ngPdf', function($window) {
     var renderTask = null;
     var pdfLoaderTask = null;
     var debug = false;
@@ -29,6 +29,7 @@
       canvas.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
       return canvas;
     };
+
     return {
       restrict: 'E',
       templateUrl: function(element, attr) {
@@ -44,9 +45,9 @@
         var scale = attrs.scale > 0 ? attrs.scale : 1;
 
         //Set the canvas height and width to the height and width of the viewport
+        var $canvas = element.find('canvas');
         var canvasid = attrs.canvasid || 'pdf-canvas';
-        var $canvas = angular.element(document).find('#' + canvasid);
-        var canvas = document.getElementById(canvasid);
+        var canvas = document.getElementById(canvasid);;
         var ctx = canvas.getContext('2d');
 
         //Append the canvas to the pdf container div
@@ -90,31 +91,33 @@
 
             // Arrange text layer
             //var canvasOffset = $canvas.offset();
-            var $textLayerDiv = angular.element('<div />')
-                .addClass('textLayer')
-                .css('height', viewport.height + 'px')
-                .css('width', viewport.width + 'px')
-                /*.offset({
-                  top: canvasOffset.top,
-                  left: canvasOffset.left
-                })*/
-                ;
+            var $textLayerDiv = element.find('textlayer')
+                .css({
+                  height: viewport.height + 'px',
+                  width: viewport.width + 'px'
+                });
+                //.css('height', viewport.height + 'px')
+                //.css('width', viewport.width + 'px');
+            /*.offset({
+             top: canvasOffset.top,
+             left: canvasOffset.left
+             });*/
 
-            element.append($textLayerDiv);
-            $compile($textLayerDiv)(scope);
+            console.log($textLayerDiv);
+
 
             //The following few lines of code set up scaling on the context if we are on a HiDPI display
-            if (scale.scaled) {
+            /*if (scale.scaled) {
               var cssScale = 'scale(' + (1 / scale.sx) + ', ' +
                   (1 / scale.sy) + ')';
               CustomStyle.setProp('transform', canvas, cssScale);
               CustomStyle.setProp('transformOrigin', canvas, '0% 0%');
 
-              if ($textLayerDiv.get(0)) {
-                CustomStyle.setProp('transform', $textLayerDiv.get(0), cssScale);
-                CustomStyle.setProp('transformOrigin', $textLayerDiv.get(0), '0% 0%');
+              if ($textLayerDiv[0]) {
+                CustomStyle.setProp('transform', $textLayerDiv[0], cssScale);
+                CustomStyle.setProp('transformOrigin', $textLayerDiv[0], '0% 0%');
               }
-            }
+            }*/
 
             ctx._scaleX = scale.sx;
             ctx._scaleY = scale.sy;
@@ -127,7 +130,8 @@
             setCanvasDimensions(canvas, viewport.width, viewport.height);
 
             page.getTextContent().then(function (textContent) {
-              var textLayer = new TextLayerBuilder($textLayerDiv.get(0), 0);
+
+              var textLayer = new TextLayerBuilder($textLayerDiv, 0);
 
               textLayer.setTextContent(textContent);
 
@@ -189,14 +193,14 @@
         };
 
         scope.rotate = function() {
-          if (canvas.getAttribute('class') === 'rotate0') {
-            canvas.setAttribute('class', 'rotate90');
-          } else if (canvas.getAttribute('class') === 'rotate90') {
-            canvas.setAttribute('class', 'rotate180');
-          } else if (canvas.getAttribute('class') === 'rotate180') {
-            canvas.setAttribute('class', 'rotate270');
+          if ($canvas.hasClass('rotate0')) {
+            $canvas.addClass('rotate90');
+          } else if ($canvas.hasClass('class') === 'rotate90') {
+            $canvas.addClass('rotate180');
+          } else if ($canvas.hasClass('rotate180')) {
+            $canvas.addClass('rotate270');
           } else {
-            canvas.setAttribute('class', 'rotate0');
+            $canvas.addClass('rotate0');
           }
         };
 
@@ -269,5 +273,5 @@
 
       }
     };
-  } ]);
+  });
 })();
