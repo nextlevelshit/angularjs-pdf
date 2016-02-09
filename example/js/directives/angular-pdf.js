@@ -51,9 +51,9 @@
         var ctx = canvas.getContext('2d');
 
         //Append the canvas to the pdf container div
-        var $pdfContainer = angular.element(document).find('#pdfContainer');
+        /*var $pdfContainer = angular.element(document).find('#pdfContainer');
         $pdfContainer.css('height', canvas.height + 'px').css('width', canvas.width + 'px');
-        $pdfContainer.append($canvas);
+        $pdfContainer.append($canvas);*/
 
 
         debug = attrs.hasOwnProperty('debug') ? attrs.debug : false;
@@ -94,7 +94,9 @@
             var $textLayerDiv = element.find('textlayer')
                 .css({
                   height: viewport.height + 'px',
-                  width: viewport.width + 'px'
+                  width: viewport.width + 'px',
+                  top: 0,
+                  left: 0
                 });
                 //.css('height', viewport.height + 'px')
                 //.css('width', viewport.width + 'px');
@@ -103,21 +105,20 @@
              left: canvasOffset.left
              });*/
 
-            console.log($textLayerDiv);
-
 
             //The following few lines of code set up scaling on the context if we are on a HiDPI display
-            /*if (scale.scaled) {
-              var cssScale = 'scale(' + (1 / scale.sx) + ', ' +
-                  (1 / scale.sy) + ')';
-              CustomStyle.setProp('transform', canvas, cssScale);
-              CustomStyle.setProp('transformOrigin', canvas, '0% 0%');
+            var outputScale = getOutputScale();
 
-              if ($textLayerDiv[0]) {
-                CustomStyle.setProp('transform', $textLayerDiv[0], cssScale);
-                CustomStyle.setProp('transformOrigin', $textLayerDiv[0], '0% 0%');
+            if (outputScale.scaled) {
+              var cssScale = 'scale(' + (1 / outputScale.sx) + ', ' + (1 / outputScale.sy) + ')';
+              // TODO: setProp() not working cause of element.style in CustomeStyle
+              //CustomStyle.setProp('transform', canvas, cssScale);
+              //CustomStyle.setProp('transformOrigin', canvas, '0% 0%');
+              if ($textLayerDiv) {
+                //CustomStyle.setProp('transform', $textLayerDiv, cssScale);
+                //CustomStyle.setProp('transformOrigin', $textLayerDiv, '0% 0%');
               }
-            }*/
+            }
 
             ctx._scaleX = scale.sx;
             ctx._scaleY = scale.sy;
@@ -125,13 +126,11 @@
               ctx.scale(scale.sx, scale.sy);
             }
 
-            $pdfContainer.append($textLayerDiv);
-
             setCanvasDimensions(canvas, viewport.width, viewport.height);
 
             page.getTextContent().then(function (textContent) {
 
-              var textLayer = new TextLayerBuilder($textLayerDiv, 0);
+              var textLayer = new TextLayerBuilder($textLayerDiv[0], 0);
 
               textLayer.setTextContent(textContent);
 
@@ -140,6 +139,9 @@
                 viewport: viewport,
                 textLayer: textLayer
               };
+
+              page.render(renderContext);
+              return;
 
               renderTask = page.render(renderContext);
               renderTask.promise.then(function() {
