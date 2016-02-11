@@ -50,21 +50,16 @@
         var canvas = document.getElementById(canvasid);;
         var ctx = canvas.getContext('2d');
 
-        //Append the canvas to the pdf container div
-        /*var $pdfContainer = angular.element(document).find('#pdfContainer');
-        $pdfContainer.css('height', canvas.height + 'px').css('width', canvas.width + 'px');
-        $pdfContainer.append($canvas);*/
-
-
         debug = attrs.hasOwnProperty('debug') ? attrs.debug : false;
         var creds = attrs.usecredentials;
         var windowEl = angular.element($window);
 
-        windowEl.on('scroll', function() {
+        // TODO: Fix, causing angular error
+        /*windowEl.on('scroll', function() {
           scope.$apply(function() {
             scope.scroll = windowEl[0].scrollY;
           });
-        });
+        });*/
 
         PDFJS.disableWorker = true;
         scope.pageNum = pageToDisplay;
@@ -90,20 +85,14 @@
             canvas.width = viewport.width;
 
             // Arrange text layer
-            //var canvasOffset = $canvas.offset();
             var $textLayerDiv = element.find('textlayer')
                 .css({
                   height: viewport.height + 'px',
                   width: viewport.width + 'px',
-                  top: 0,
-                  left: 0
-                });
-                //.css('height', viewport.height + 'px')
-                //.css('width', viewport.width + 'px');
-            /*.offset({
-             top: canvasOffset.top,
-             left: canvasOffset.left
-             });*/
+                  top: canvas.offsetTop + 'px',
+                  left: canvas.offsetLeft + 'px'
+                })
+                .html(''); // remove old content
 
 
             //The following few lines of code set up scaling on the context if we are on a HiDPI display
@@ -111,12 +100,11 @@
 
             if (outputScale.scaled) {
               var cssScale = 'scale(' + (1 / outputScale.sx) + ', ' + (1 / outputScale.sy) + ')';
-              // TODO: setProp() not working cause of element.style in CustomeStyle
-              //CustomStyle.setProp('transform', canvas, cssScale);
-              //CustomStyle.setProp('transformOrigin', canvas, '0% 0%');
+              //CustomStyle.setProp('transform', $canvas[0], cssScale);
+              //CustomStyle.setProp('transformOrigin', $canvas[0], '0% 0%');
               if ($textLayerDiv) {
-                //CustomStyle.setProp('transform', $textLayerDiv, cssScale);
-                //CustomStyle.setProp('transformOrigin', $textLayerDiv, '0% 0%');
+                //CustomStyle.setProp('transform', $textLayerDiv[0], cssScale);
+                //CustomStyle.setProp('transformOrigin', $textLayerDiv[0], '0% 0%');
               }
             }
 
@@ -126,7 +114,7 @@
               ctx.scale(scale.sx, scale.sy);
             }
 
-            setCanvasDimensions(canvas, viewport.width, viewport.height);
+            //setCanvasDimensions(canvas, viewport.width, viewport.height);
 
             page.getTextContent().then(function (textContent) {
 
@@ -143,14 +131,14 @@
               page.render(renderContext);
               return;
 
-              renderTask = page.render(renderContext);
-              renderTask.promise.then(function() {
-                if (typeof scope.onPageRender === 'function') {
-                  scope.onPageRender();
-                }
-              }).catch(function (reason) {
-                console.log(reason);
-              });
+              /*renderTask = page.render(renderContext);
+               renderTask.promise.then(function() {
+               if (typeof scope.onPageRender === 'function') {
+               scope.onPageRender();
+               }
+               }).catch(function (reason) {
+               console.log(reason);
+               });*/
             });
           });
         };
@@ -263,13 +251,17 @@
             }
             url = newVal;
             scope.pageNum = scope.pageToDisplay = pageToDisplay;
-            if (pdfLoaderTask) {
+
+            renderPDF();
+            return;
+
+            /*if (pdfLoaderTask) {
                 pdfLoaderTask.destroy().then(function () {
                     renderPDF();
                 });
             } else {
                 renderPDF();
-            }
+            }*/
           }
         });
 
