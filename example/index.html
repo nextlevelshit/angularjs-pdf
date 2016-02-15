@@ -4,12 +4,11 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <title>AngularJS PDFJS Directive</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="assets/styles.css">
 </head>
 <body ng-app="App">
 
   <div class="wrapper" ng-controller="DocCtrl">
-    <h1>{{pdfName}}</h1>
     <ng-pdf template-url="partials/viewer.html" canvasid="pdf" scale="page-fit" page=1></ng-pdf>
   </div>
 

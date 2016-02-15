@@ -113,9 +113,28 @@ module.exports = function(grunt) {
         }
       }
     },
+
     karma: {
       unit: {
         configFile: 'test/karma.conf.js'
+      }
+    },
+
+    sass: {
+      dist: {
+        files: {
+          'example/assets/styles.css': 'example/styles/master.scss'
+        }
+      }
+    },
+
+    watch: {
+      css: {
+        files: 'example/styles/*.scss',
+        tasks: ['sass'],
+        options: {
+          livereload: true
+        },
       }
     }
   });
@@ -128,6 +147,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsonlint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', [
     'clean',
@@ -144,5 +165,9 @@ module.exports = function(grunt) {
     'jscs',
     'jshint',
     'karma'
+  ]);
+
+  grunt.registerTask('dev', [
+    'watch'
   ]);
 };
