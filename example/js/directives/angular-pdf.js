@@ -3,7 +3,7 @@
 
   'use strict';
 
-  angular.module('pdf', []).directive('ngPdf', function($window) {
+  angular.module('pdf', []).directive('ngPdf', function($window, $compile) {
     var renderTask = null;
     var pdfLoaderTask = null;
     var debug = false;
@@ -44,11 +44,6 @@
         var pageFit = attrs.scale === 'page-fit';
         var scale = attrs.scale > 0 ? attrs.scale : 1;
 
-        //Set the canvas height and width to the height and width of the viewport
-        var $canvas = element.find('canvas');
-        var canvasid = attrs.canvasid || 'pdf-canvas';
-        var canvas = document.getElementById(canvasid);;
-        var ctx = canvas.getContext('2d');
 
         debug = attrs.hasOwnProperty('debug') ? attrs.debug : false;
         var creds = attrs.usecredentials;
@@ -64,9 +59,25 @@
         PDFJS.disableWorker = true;
         scope.pageNum = pageToDisplay;
 
-        scope.renderPage = function(num) {
+        scope.renderPage = function (num) {
+
+          //Set new element for canvas, page container and text layer
+          var $container = angular.element('<div class="container" id="container-' + num +'></div>"');
+          var $canvas = angular.element('<canvas class="container__canvas" id="pdf-' + num +'"></canvas>');
+          var $textlayer = angular.element('<textlayer class="container__textlayer" id="textlayer-' + num +'"></textlayer>');
+
+          // Append container and canvas to directive element
+          //$container.append($canvas);
+          element.append($canvas);
+          element.append($textlayer);
+
+          var container = $container[0];
+          var canvas = $canvas[0];
+          var ctx = canvas.getContext('2d');
+
+
           if (renderTask) {
-              renderTask._internalRenderTask.cancel();
+            renderTask._internalRenderTask.cancel();
           }
 
           pdfDoc.getPage(num).then(function(page) {
@@ -85,14 +96,13 @@
             canvas.width = viewport.width;
 
             // Arrange text layer
-            var $textLayerDiv = element.find('textlayer')
-                .css({
-                  height: viewport.height + 'px',
-                  width: viewport.width + 'px',
-                  top: canvas.offsetTop + 'px',
-                  left: canvas.offsetLeft + 'px'
-                })
-                .html(''); // remove old content
+            $textlayer.css({
+              height: viewport.height + 'px',
+              width: viewport.width + 'px',
+              top: canvas.offsetTop + 'px',
+              left: canvas.offsetLeft + 'px'
+            })
+            .html(''); // remove old content
 
 
             //The following few lines of code set up scaling on the context if we are on a HiDPI display
@@ -102,9 +112,9 @@
               var cssScale = 'scale(' + (1 / outputScale.sx) + ', ' + (1 / outputScale.sy) + ')';
               //CustomStyle.setProp('transform', $canvas[0], cssScale);
               //CustomStyle.setProp('transformOrigin', $canvas[0], '0% 0%');
-              if ($textLayerDiv) {
-                //CustomStyle.setProp('transform', $textLayerDiv[0], cssScale);
-                //CustomStyle.setProp('transformOrigin', $textLayerDiv[0], '0% 0%');
+              if ($textlayer) {
+                //CustomStyle.setProp('transform', $textlayer[0], cssScale);
+                //CustomStyle.setProp('transformOrigin', $textlayer[0], '0% 0%');
               }
             }
 
@@ -118,7 +128,7 @@
 
             page.getTextContent().then(function (textContent) {
 
-              var textLayer = new TextLayerBuilder($textLayerDiv[0], 0);
+              var textLayer = new TextLayerBuilder($textlayer[0], 0);
 
               textLayer.setTextContent(textContent);
 
@@ -201,7 +211,7 @@
         }
 
         function renderPDF() {
-          clearCanvas();
+          //clearCanvas();
 
           var params = {
             'url': url,
@@ -221,7 +231,12 @@
                   }
 
                   pdfDoc = _pdfDoc;
-                  scope.renderPage(scope.pageToDisplay);
+
+                  for(var i = 1; i <= _pdfDoc.numPages; i++){
+                    scope.renderPage(i);
+                  }
+
+                  //scope.renderPage(scope.pageToDisplay);
 
                   scope.$apply(function() {
                     scope.pageCount = _pdfDoc.numPages;

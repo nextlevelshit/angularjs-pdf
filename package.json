@@ -42,5 +42,8 @@
     "build": "grunt",
     "start": "http-server ./example -p 8081",
     "test": "grunt --verbose"
+  },
+  "dependencies": {
+    "font-awesome": "^4.5.0"
   }
 }

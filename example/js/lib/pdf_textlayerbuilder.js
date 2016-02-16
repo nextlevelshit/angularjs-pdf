@@ -149,7 +149,6 @@ var TextLayerBuilder = function textLayerBuilder(textLayerDiv, pageIdx) {
         textDiv.style.top = (geom.y - fontHeight) + 'px';
 
         // The content of the div is set in the `setTextContent` function.
-        console.log(geom);
         this.textDivs.push(textDiv);
     };
 
