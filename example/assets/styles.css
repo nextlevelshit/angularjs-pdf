@@ -2077,10 +2077,10 @@
   content: ""; }
 
 /**
- * Mixins
+ * Variables
  */
 /**
- * Variables
+ * Mixins
  */
 /**
  * Resetting
@@ -2194,6 +2194,29 @@ textlayer {
     /*line-height: 1;*/
     white-space: pre;
     cursor: text; }
+
+.logo {
+  position: fixed;
+  left: 24px;
+  top: 24px;
+  height: 27.36px;
+  overflow: hidden;
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 36px;
+  color: #DE3163;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+  opacity: 0.6;
+  transition: all 260ms cubic-bezier(0.58, 0.92, 0.77, 1.22);
+  font-family: 'PT Sans', sans-serif; }
+  .logo--small {
+    font-size: 21.6px;
+    color: #efefef; }
+  .logo:hover {
+    height: 36px;
+    cursor: pointer;
+    opacity: 1;
+    box-shadow: none; }
 
 /**
  * DEPRECATED: Remove as soon as possible

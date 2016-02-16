@@ -6,8 +6,14 @@
   <title>AngularJS PDFJS Directive</title>
   <link rel="stylesheet" href="assets/styles.css">
   <link href="//fonts.googleapis.com/css?family=Droid+Sans:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700,700italic" rel="stylesheet" type="text/css">
 </head>
 <body ng-app="App">
+
+  <div class="logo">
+    PDF<span class="logo--small">SHACK</span>
+  </div>
 
   <div class="wrapper" ng-controller="DocCtrl">
     <ng-pdf template-url="partials/viewer.html" scale="page-fit" page=1></ng-pdf>

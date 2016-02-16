@@ -207,11 +207,15 @@
         scope.openModal = function () {
           var $modal = angular.element('<modal></modal>');
           element.append($modal);
-        }
+        };
 
         scope.destroyModal = function () {
 
-        }
+        };
+
+        scope.clickDictonary = function () {
+
+        };
 
         function clearCanvas() {
           if (ctx) {
