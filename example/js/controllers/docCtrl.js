@@ -1,9 +1,9 @@
 app.controller('DocCtrl', function($scope) {
 
   $scope.pdfName = 'Relativity: The Special and General Theory by Albert Einstein';
-  $scope.pdfUrl = 'pdf/camus.pdf';
+  $scope.pdfUrl = 'pdf/audi.pdf';
   $scope.scroll = 0;
-  $scope.loading = 'loading';
+  $scope.loading = true;
 
   $scope.getNavStyle = function(scroll) {
     if(scroll > 100) return 'pdf-controls fixed';
@@ -15,7 +15,7 @@ app.controller('DocCtrl', function($scope) {
   }
 
   $scope.onLoad = function() {
-    $scope.loading = '';
+    $scope.loading = false;
   }
 
   $scope.onProgress = function(progress) {

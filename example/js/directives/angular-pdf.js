@@ -192,7 +192,7 @@
           scope.renderPage(scope.pageToDisplay);
         };
 
-        scope.rotate = function() {
+        scope.rotate = function () {
           if ($canvas.hasClass('rotate0')) {
             $canvas.addClass('rotate90');
           } else if ($canvas.hasClass('class') === 'rotate90') {
@@ -203,6 +203,15 @@
             $canvas.addClass('rotate0');
           }
         };
+
+        scope.openModal = function () {
+          var $modal = angular.element('<modal></modal>');
+          element.append($modal);
+        }
+
+        scope.destroyModal = function () {
+
+        }
 
         function clearCanvas() {
           if (ctx) {
