@@ -16,7 +16,8 @@
   </div>
 
   <div class="wrapper" ng-controller="DocCtrl">
-    <ng-pdf template-url="partials/viewer.html" scale="page-fit" page=1></ng-pdf>
+    <pdf-document scale="page-fit" page=1></pdf-document>
+    <pdf-sidebar></pdf-sidebar>
   </div>
 
   <script src="js/lib/pdf.js"></script>
@@ -25,8 +26,9 @@
   <script src="js/lib/angular.min.js"></script>
 
   <script src="js/app.js"></script>
-  <script src="js/controllers/docCtrl.js"></script>
-  <script src="js/directives/angular-pdf.js"></script>
+  <script src="js/controllers/document.controller.js"></script>
+  <script src="js/directives/document.directive.js"></script>
+  <script src="js/directives/sidebar.directive.js"></script>
 
 </body>
 </html>

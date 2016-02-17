@@ -3,7 +3,7 @@
 
   'use strict';
 
-  angular.module('pdf', []).directive('ngPdf', function($window, $compile) {
+  angular.module('pdf', []).directive('pdfDocument', function($window, $compile) {
     var renderTask = null;
     var pdfLoaderTask = null;
     var debug = false;
@@ -33,7 +33,7 @@
     return {
       restrict: 'E',
       templateUrl: function(element, attr) {
-        return attr.templateUrl ? attr.templateUrl : 'partials/viewer.html';
+        return attr.templateUrl ? attr.templateUrl : 'templates/document.tpl.html';
       },
       link: function(scope, element, attrs) {
         element.css('display', 'block');
@@ -153,22 +153,6 @@
           });
         };
 
-        scope.goPrevious = function() {
-          if (scope.pageToDisplay <= 1) {
-            return;
-          }
-          scope.pageToDisplay = parseInt(scope.pageToDisplay) - 1;
-          scope.pageNum = scope.pageToDisplay;
-        };
-
-        scope.goNext = function() {
-          if (scope.pageToDisplay >= pdfDoc.numPages) {
-            return;
-          }
-          scope.pageToDisplay = parseInt(scope.pageToDisplay) + 1;
-          scope.pageNum = scope.pageToDisplay;
-        };
-
         scope.zoomIn = function() {
           pageFit = false;
           scale = parseFloat(scale) + 0.2;
@@ -187,22 +171,6 @@
           pageFit = true;
           scope.renderPage(scope.pageToDisplay);
         }
-
-        scope.changePage = function() {
-          scope.renderPage(scope.pageToDisplay);
-        };
-
-        scope.rotate = function () {
-          if ($canvas.hasClass('rotate0')) {
-            $canvas.addClass('rotate90');
-          } else if ($canvas.hasClass('class') === 'rotate90') {
-            $canvas.addClass('rotate180');
-          } else if ($canvas.hasClass('rotate180')) {
-            $canvas.addClass('rotate270');
-          } else {
-            $canvas.addClass('rotate0');
-          }
-        };
 
         scope.openModal = function () {
           var $modal = angular.element('<modal></modal>');
@@ -282,14 +250,6 @@
 
             renderPDF();
             return;
-
-            /*if (pdfLoaderTask) {
-                pdfLoaderTask.destroy().then(function () {
-                    renderPDF();
-                });
-            } else {
-                renderPDF();
-            }*/
           }
         });
 
