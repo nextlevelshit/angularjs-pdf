@@ -1,0 +1,19 @@
+textlayer {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    color: #000;
+    font-family: sans-serif;
+    overflow: hidden;
+    opacity: 0.6;
+
+    > div {
+        color: transparent;
+        position: absolute;
+        /*line-height: 1;*/
+        white-space: pre;
+        cursor: text;
+    }
+}

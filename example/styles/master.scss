@@ -1,0 +1,193 @@
+/**
+ * External Libraries
+ */
+
+@import '../../node_modules/font-awesome/scss/font-awesome';
+
+/**
+ * Variables
+ */
+
+$color-first: #DE3163;
+$color-second: #3EB80D;
+$color-third: #197591;
+
+$background-color: #3a3a3a;
+$background-color-inverse: #efefef;
+
+$text-color: #efefef;
+$text-color-inverse: $background-color;
+
+$text-color-active: $color-first;
+$text-color-active-inverse: $color-first;
+
+$sidebar-width: 88px;
+
+$padding: 12px;
+
+$transition-bounce: all 260ms cubic-bezier(.58,.92,.77,1.22);
+
+/**
+ * Mixins
+ */
+
+ @mixin font-ui() {
+   font-family: 'Droid Sans', sans-serif;
+   font-size: 10px;
+ }
+
+ @mixin font-ci(){
+   font-family: 'PT Sans', sans-serif;
+ }
+
+/**
+ * Resetting
+ */
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(222, 49, 99, 0.3);
+}
+::-moz-selection {
+  background: rgba(222, 49, 99, 0.3);
+}
+
+body {
+  background: $background-color;
+  font-family: sans-serif;
+}
+
+canvas {
+  display: block;
+  margin: 10px auto;
+}
+
+.wrapper {
+  position: static;
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+
+  &:hover {
+    .sidebar--menu {
+      right: 0;
+      opacity: 1;
+    }
+  }
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: $sidebar-width;
+  padding: $padding * 2;
+
+  &--menu {
+    right: -$sidebar-width;
+    opacity: 0;
+    transition-delay: 600ms;
+    transition: $transition-bounce;
+  }
+
+  &--highlights {
+    left: 0;
+  }
+}
+
+.button {
+  position: relative;
+  display: block;
+  margin-bottom: $padding * 2;
+
+  background: $background-color-inverse;
+  color: $text-color-inverse;
+  box-shadow: 0 0 8px rgba(0,0,0,0.6);
+  cursor: pointer;
+  text-align: center;
+
+  transition: all 300ms ease-out;
+
+  &--circle {
+    $this-radius: 20px;
+
+    z-index: 100;
+
+    width: $this-radius * 2;
+    height: $this-radius * 2;
+    border-radius: $this-radius;
+
+    line-height: $this-radius * 2;
+
+    .button__title {
+      right: $this-radius * 2;
+    }
+
+    &:hover, &:focus {
+      text-decoration: none;
+      box-shadow: 0 0 4px rgba(0,0,0,0.6);
+      color: $text-color-active-inverse;
+
+      .button__title {
+        opacity: 1;
+        transform: rotateY(0deg);
+      }
+    }
+
+    &:active {
+      transform: scale(0.95, 0.95);
+    }
+  }
+
+  &__title {
+    z-index: 10;
+
+    position: absolute;
+    //right: -300px; // TODO: This is just a random number
+    width: auto;
+    padding-right: $padding;
+
+    color: $text-color;
+    top: 0;
+    opacity: 0;
+    white-space: nowrap;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.4);
+
+    transition: $transition-bounce;
+    transform: rotateY(90deg);
+    transform-origin: 100% 50% 0;
+
+    @include font-ui();
+  }
+}
+
+.loading {
+  position: fixed;
+  top: $padding * 3;
+  left: 50%;
+  color: $text-color;
+}
+
+/**
+ * Components
+ */
+
+
+@import 'component.textlayer';
+@import 'component.logo';
+
+
+
+/**
+ * DEPRECATED: Remove as soon as possible
+ */
+.pdf-controls { width: 100%; display: none; background: #eee; padding: 1em;}
+.rotate0 { transform: rotate(0deg); }
+.rotate90 { transform: rotate(90deg); }
+.rotate180 { transform: rotate(180deg); }
+.rotate270 { transform: rotate(270deg); }
+.fixed { position: fixed; top: 0; left: calc(50% - 480px); z-index: 100; width: 100%; padding: 1em; background: rgba(238, 238, 238,.9); width: 960px; }

@@ -8,7 +8,7 @@ module.exports = function(grunt) {
           'package.json',
           'bower.json',
           'readme.md',
-          'example/js/directives/angular-pdf.js',
+          'example/js/directives/*.js',
           'dist/angular-pdf.js',
           'dist/angular-pdf.min.js'
         ],
@@ -19,7 +19,8 @@ module.exports = function(grunt) {
           'package.json',
           'bower.json',
           'readme.md',
-          'example/js/directives/angular-pdf.js',
+          'example/js/directives/*.js',
+          'example/js/directives/*.tpl.html'
           'dist/angular-pdf.js',
           'dist/angular-pdf.min.js'
         ],
@@ -50,8 +51,8 @@ module.exports = function(grunt) {
             dest: 'example/js/directives/'
           },
           {
-            cwd: 'bower_components/pdfjs-dist/build',
-            src: [ 'pdf.js', 'pdf.worker.js' ],
+            cwd: 'bower_components/pdfjs-dist',
+            src: [ 'build/pdf.js', 'build/pdf.worker.js', 'web/pdf_viewer.js' ],
             dest: 'example/js/lib',
             flatten: true,
             expand: true
@@ -113,9 +114,28 @@ module.exports = function(grunt) {
         }
       }
     },
+
     karma: {
       unit: {
         configFile: 'test/karma.conf.js'
+      }
+    },
+
+    sass: {
+      dist: {
+        files: {
+          'example/assets/styles.css': 'example/styles/master.scss'
+        }
+      }
+    },
+
+    watch: {
+      css: {
+        files: 'example/styles/*.scss',
+        tasks: ['sass'],
+        options: {
+          livereload: true
+        },
       }
     }
   });
@@ -128,6 +148,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-jsonlint');
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('default', [
     'clean',
@@ -144,5 +166,9 @@ module.exports = function(grunt) {
     'jscs',
     'jshint',
     'karma'
+  ]);
+
+  grunt.registerTask('dev', [
+    'watch'
   ]);
 };
